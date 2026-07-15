@@ -1,99 +1,199 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Reservaciones API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API for a reservation/booking management system built with NestJS, TypeORM, and MySQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Authentication** — JWT-based auth with login, register, and token validation. Role-based access control (admin, boss, employee, cliente).
+- **Users** — CRUD for user accounts with roles and reservation counters.
+- **Bookings** — Reservation management with date/time, associated service, employee, and state.
+- **Services Provided** — Catalog of services with name, description, price, and duration.
+- **States Reservations** — Configurable reservation states (e.g., pending, confirmed, cancelled) with color coding.
+- **Employee Management** — Employee records linked to user accounts.
+- **Employee Schedule** — Work schedules per employee with days, start/end times, and day-off flags.
+- **Store Closure** — Store closure management for specific days, date ranges, or recurring patterns.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+| Category    | Technology                          |
+| ----------- | ----------------------------------- |
+| Framework   | NestJS 10                           |
+| ORM         | TypeORM 0.3                         |
+| Database    | MySQL (mysql2 driver)               |
+| Auth        | JWT + Passport (passport-jwt)       |
+| Validation  | class-validator + class-transformer |
+| Runtime     | Node.js + TypeScript                |
+| Testing     | Jest                                |
+
+## Prerequisites
+
+- Node.js >= 18
+- MySQL Server
+- npm
+
+## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+## Environment Configuration
+
+Copy the example env file and fill in your credentials:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp .env.example .env.development
 ```
 
-## Run tests
+For production:
+
+```bash
+cp .env.example .env.production
+```
+
+Then edit the values:
+
+```env
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USER=your_user
+DATABASE_PASSWORD=your_password
+DATABASE_NAME=reservaciones
+PORT=3000
+JWT_SECRET=your_jwt_secret
+```
+
+> The app loads env files based on `NODE_ENV` (`.env.development` or `.env.production`).
+
+## Running the App
+
+```bash
+# development (watch mode)
+npm run start:dev
+
+# production
+npm run build
+npm run start:prod
+```
+
+The API starts on the port defined in your env file (default: 3000).
+
+## Database Migrations
+
+```bash
+# generate a migration from entity changes
+npm run migration:generate
+
+# run pending migrations
+npm run migration:run
+
+# revert the last migration
+npm run migration:revert
+```
+
+## API Endpoints
+
+All endpoints are prefixed with the base URL (default `http://localhost:3000`).
+
+### Auth (`/auth`)
+
+| Method | Route             | Description              |
+| ------ | ----------------- | ------------------------ |
+| POST   | `/auth/login`     | Login with email/password |
+| POST   | `/auth/register`  | Register a new user       |
+| POST   | `/auth/validate-token` | Validate JWT token   |
+
+### Users (`/users`)
+
+| Method | Route       | Description         |
+| ------ | ----------- | ------------------- |
+| GET    | `/users`    | List all users      |
+| GET    | `/users/:id`| Get user by ID      |
+| POST   | `/users`    | Create a user       |
+| PATCH  | `/users/:id`| Update a user       |
+| DELETE | `/users/:id`| Delete a user       |
+
+### Bookings (`/bookings`)
+
+| Method | Route         | Description            |
+| ------ | ------------- | ---------------------- |
+| GET    | `/bookings`   | List all bookings      |
+| GET    | `/bookings/:id` | Get booking by ID    |
+| POST   | `/bookings`   | Create a booking       |
+| PATCH  | `/bookings/:id` | Update a booking    |
+| DELETE | `/bookings/:id` | Delete a booking    |
+
+### Services Provided (`/services-provided`)
+
+| Method | Route                  | Description           |
+| ------ | ---------------------- | --------------------- |
+| GET    | `/services-provided`   | List all services     |
+| GET    | `/services-provided/:id` | Get service by ID  |
+| POST   | `/services-provided`   | Create a service      |
+| PATCH  | `/services-provided/:id` | Update a service   |
+| DELETE | `/services-provided/:id` | Delete a service   |
+
+### States Reservations (`/states-reservations`)
+
+| Method | Route                     | Description                  |
+| ------ | ------------------------- | ---------------------------- |
+| GET    | `/states-reservations`    | List all states              |
+| GET    | `/states-reservations/:id`| Get state by ID             |
+| POST   | `/states-reservations`    | Create a state               |
+| PATCH  | `/states-reservations/:id`| Update a state               |
+| DELETE | `/states-reservations/:id`| Delete a state               |
+
+### Employee Management (`/employees-management`)
+
+| Method | Route                       | Description             |
+| ------ | --------------------------- | ----------------------- |
+| GET    | `/employees-management`     | List all employees      |
+| GET    | `/employees-management/:id` | Get employee by ID      |
+| POST   | `/employees-management`     | Create an employee      |
+| PATCH  | `/employees-management/:id` | Update an employee      |
+| DELETE | `/employees-management/:id` | Delete an employee      |
+
+### Employee Schedule (`/employees-schedules`)
+
+| Method | Route                      | Description              |
+| ------ | -------------------------- | ----------------------- |
+| GET    | `/employees-schedules`     | List all schedules       |
+| GET    | `/employees-schedules/:employeeId` | Get schedule by employee |
+| POST   | `/employees-schedules`     | Create a schedule        |
+| PATCH  | `/employees-schedules/:id` | Update a schedule       |
+| DELETE | `/employees-schedules/:id` | Delete a schedule       |
+
+### Store Closures (`/store-closures`)
+
+| Method | Route                  | Description            |
+| ------ | ---------------------- | ---------------------- |
+| GET    | `/store-closures`      | List all closures      |
+| GET    | `/store-closures/:id`  | Get closure by ID      |
+| POST   | `/store-closures`      | Create a closure       |
+| PATCH  | `/store-closures/:id`  | Update a closure       |
+| DELETE | `/store-closures/:id`  | Delete a closure       |
+
+## Testing
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
+
+# watch mode
+npm run test:watch
+
+# coverage
+npm run test:cov
 
 # e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test:e2e
 ```
 
-## Deployment
+## User Roles
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Role     | Value      | Description                               |
+| -------- | ---------- | ----------------------------------------- |
+| Admin    | `admin`    | Full system access                        |
+| Boss     | `boss`     | Management-level access                   |
+| Employee | `employee` | Staff with schedule and booking access     |
+| Cliente  | `cliente`  | Default role for registered customers      |

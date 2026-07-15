@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# TypeScript build info
+*.tsbuildinfo
+
 # Logs
 logs
 *.log
@@ -35,13 +38,6 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
 # temp directory
 .temp
 .tmp
@@ -57,3 +53,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Variables de entorno
 .env*
+!.env.example
+
+# AI tooling
+.atl/
